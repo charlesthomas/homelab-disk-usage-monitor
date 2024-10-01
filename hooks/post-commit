@@ -2,6 +2,8 @@
 
 REPO=homelab-disk-usage-monitor
 
+[[ "$(git branch --show-current)" == "main" ]] || exit 1
+
 func setup_destination {
     [ ! -d ../$1 ] && git clone https://github.com/charlesthomas/$1 ../$1
     branch=$(git -C ../$1 branch --show-current)

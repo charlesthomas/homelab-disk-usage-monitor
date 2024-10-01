@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scripts
+  namespace: disk-usage-monitor
+data:
+  liveness.sh: |-
+    tailscale ping offsite-rpi &>/dev/null
+  nas01.sh: |
+    ssh seedbox du -sh . | awk '{ print $1 }' | tr -d G
+  nas02.sh: |
+    ssh nas02 df -h /mnt/nas02/critical | tail -1 | awk '{ print \$3 }' | tr -d G
+  seedbox.sh: |
+    ssh seedbox du -sh . | awk '{ print $1 }' | tr -d G
+  update_hass.sh: |
+    chmod -R 600 /ssh
+    apk update
+    apk add curl ssh
+    curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
+      -d "{\"state\": \"$(/opt/nas01.bash)\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
+      "https://ass.crt.house/api/states/input_number.nas01" > /dev/null
+
+    curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
+      -d "{\"state\": \"$(/opt/nas02.bash)\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
+      "https://ass.crt.house/api/states/input_number.nas02" > /dev/null
+
+    curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
+      -d "{\"state\": \"$(/opt/seedbox.bash)\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
+      "https://ass.crt.house/api/states/input_number.seebox" > /dev/null
+
+    curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
+      -d "{\"state\": \"$(date '+%F %T')\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
+      "https://ass.crt.house/api/states/input_datetime.storage_last_update" > /dev/null
+

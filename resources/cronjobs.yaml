@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: disk-usage-monitor
+  namespace: disk-usage-monitor
+spec:
+  concurrencyPolicy: Forbid
+  schedule: "*/15 * * * *"
+  timeZone: America/Detroit
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: update_hass
+              command:
+                - /bin/sh
+                - /opt/update_hass.sh
+              image: alpine:latest
+              imagePullPolicy: IfNotPresent
+              resources: {}
+              volumeMounts:
+                - mountPath: /opt
+                  name: scripts
+                - mountPath: /ssh
+                  name: ssh
+          initContainers:
+            - name: tailscale
+              imagePullPolicy: IfNotPresent
+              image: "ghcr.io/tailscale/tailscale:v1.56.1"
+              readinessProbe:
+                exec:
+                  command:
+                    - /bin/sh
+                    - /opt/liveness.sh
+                initialDelaySeconds: 5
+                periodSeconds: 5
+              resources: {}
+              restartPolicy: Always
+              securityContext:
+                capabilities:                                                              
+                  add:                                                                     
+                  - NET_ADMIN
+              env:
+              - name: TS_KUBE_SECRET
+                value: "tailscale"
+              - name: TS_USERSPACE
+                value: "false"
+              - name: TS_ACCEPT_DNS
+                value: "true"
+              - name: TS_AUTHKEY
+                valueFrom:
+                  secretKeyRef:
+                    name: tailscale
+                    key: TS_AUTHKEY
+          restartPolicy: Never
+          volumes:
+            - name: scripts
+              configMap:
+                name: scripts
+            - name: ssh
+              secret:
+                secretName: ssh
