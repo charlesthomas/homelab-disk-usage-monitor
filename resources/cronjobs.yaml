@@ -16,6 +16,12 @@ spec:
               command:
                 - /bin/sh
                 - /opt/update_hass.sh
+              env:
+                - name: TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: hass-token
+                      key: TOKEN
               image: alpine:latest
               imagePullPolicy: IfNotPresent
               resources: {}
