@@ -1,0 +1,20 @@
+_commit: v1.12.1-2-gb55eaa6
+_src_path: /Users/crthomas/code/charlesthomas/homelab-template
+additionalResources: ''
+backups: false
+helm: false
+homepageEnabled: false
+ingress: false
+labels: 'app: disk-usage-monitor'
+name: disk-usage-monitor
+namespace: disk-usage-monitor
+pvc: false
+reloader: true
+resources:
+- configmaps.yaml
+- cronjobs.yaml
+- external-secrets.yaml
+service: false
+serviceAccount: false
+upstreamURL: https://github.com/charlesthomas/homelab-disk-usage-monitor
+url: https://github.com/charlesthomas/homelab-disk-usage-monitor
