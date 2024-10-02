@@ -22,6 +22,8 @@ spec:
                     secretKeyRef:
                       name: hass-token
                       key: TOKEN
+                - name: TZ
+                  value: America/Detroit
               image: alpine:latest
               imagePullPolicy: IfNotPresent
               resources: {}
