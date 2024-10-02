@@ -8,27 +8,28 @@ data:
   liveness.sh: |-
     tailscale ping offsite-rpi &>/dev/null
   nas01.sh: |
-    ssh seedbox du -sh . | awk '{ print $1 }' | tr -d G
+    echo $(( 1024 * $(ssh -F /tmp/ssh/config nas01 df -h /volume1  | tail -1 | awk '{ print $3 }' | tr -d T) ))
   nas02.sh: |
-    ssh nas02 df -h /mnt/nas02/critical | tail -1 | awk '{ print \$3 }' | tr -d G
+    ssh -F /tmp/ssh/config nas02 df -h /mnt/nas02/critical | tail -1 | awk '{ print \$3 }' | tr -d G
   seedbox.sh: |
-    ssh seedbox du -sh . | awk '{ print $1 }' | tr -d G
+    ssh -F /tmp/ssh/config seedbox du -sh . | awk '{ print $1 }' | tr -d G
   update_hass.sh: |
-    sleep 9999999
-    chmod -R 600 /ssh
+    set -ex
+    cp -rv /ssh /tmp/
+    chmod -R 600 /tmp/ssh
     apk update
-    apk add curl ssh
+    apk add curl openssh
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
-      -d "{\"state\": \"$(/opt/nas01.bash)\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
+      -d "{\"state\": \"$(/bin/sh /opt/nas01.sh)\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
       "https://ass.crt.house/api/states/input_number.nas01" > /dev/null
 
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
-      -d "{\"state\": \"$(/opt/nas02.bash)\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
+      -d "{\"state\": \"$(/bin/sh /opt/nas02.sh)\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
       "https://ass.crt.house/api/states/input_number.nas02" > /dev/null
 
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
-      -d "{\"state\": \"$(/opt/seedbox.bash)\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
-      "https://ass.crt.house/api/states/input_number.seebox" > /dev/null
+      -d "{\"state\": \"$(/bin/sh /opt/seedbox.sh)\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
+      "https://ass.crt.house/api/states/input_number.seedbox" > /dev/null
 
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
       -d "{\"state\": \"$(date '+%F %T')\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
