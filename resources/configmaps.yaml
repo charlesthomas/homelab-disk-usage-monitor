@@ -18,18 +18,21 @@ data:
     sleep 30
     cp -rv /ssh /tmp/
     chmod -R 600 /tmp/ssh
+    nas01=$(/bin/sh /opt/nas01.sh)
+    [[ "${nas01}" == "" ]] && exit 1
+    nas02=$(/bin/sh /opt/nas02.sh)
+    [[ "${nas02}" == "" ]] && exit 1
+    seedbox=$(/bin/sh /opt/seedbox.sh)
+    [[ "${seedbox}" == "" ]] && exit 1
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
-      -d "{\"state\": \"$(/bin/sh /opt/nas01.sh)\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
+      -d "{\"state\": \"${nas01}\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
       "https://ass.crt.house/api/states/input_number.nas01"
-
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
-      -d "{\"state\": \"$(/bin/sh /opt/nas02.sh)\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
+      -d "{\"state\": \"${nas02}\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
       "https://ass.crt.house/api/states/input_number.nas02"
-
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
-      -d "{\"state\": \"$(/bin/sh /opt/seedbox.sh)\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
+      -d "{\"state\": \"${seedbox}\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
       "https://ass.crt.house/api/states/input_number.seedbox"
-
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
       -d "{\"state\": \"$(date '+%F %T')\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
       "https://ass.crt.house/api/states/input_datetime.storage_last_update"
