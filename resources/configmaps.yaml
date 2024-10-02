@@ -8,14 +8,14 @@ data:
   liveness.sh: |-
     tailscale ping offsite-rpi &>/dev/null
   nas01.sh: |
-    echo $(( 1024 * $(ssh -F /tmp/ssh/config nas01 df -h /volume1  | tail -1 | awk '{ print $3 }' | tr -d T) ))
+    echo "1024 * $(ssh -F /tmp/ssh/config nas01 df -h /volume1 | tail -1 | awk '{ print $3 }' | tr -d T)" | bc
   nas02.sh: |
-    ssh -F /tmp/ssh/config nas02 df -h /mnt/nas02/critical | tail -1 | awk '{ print \$3 }' | tr -d G
+    ssh -F /tmp/ssh/config nas02 df -h /mnt/nas02/critical | tail -1 | awk '{ print $3 }' | tr -d G
   seedbox.sh: |
     ssh -F /tmp/ssh/config seedbox du -sh . | awk '{ print $1 }' | tr -d G
   update_hass.sh: |
     set -ex
-    sleep 600
+    sleep 30
     cp -rv /ssh /tmp/
     chmod -R 600 /tmp/ssh
     apk update
