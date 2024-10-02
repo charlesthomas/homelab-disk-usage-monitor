@@ -12,7 +12,7 @@ spec:
       template:
         spec:
           containers:
-            - name: update_hass
+            - name: update-hass
               command:
                 - /bin/sh
                 - /opt/update_hass.sh
