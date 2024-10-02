@@ -60,6 +60,7 @@ spec:
                     name: tailscale-auth
                     key: TS_AUTHKEY
           restartPolicy: Never
+          serviceAccountName: tailscale
           volumes:
             - name: scripts
               configMap:
