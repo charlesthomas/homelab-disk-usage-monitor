@@ -24,7 +24,7 @@ spec:
                       key: TOKEN
                 - name: TZ
                   value: America/Detroit
-              image: alpine:latest
+              image: ghcr.io/charlesthomas/disk-usage-monitor:latest
               imagePullPolicy: IfNotPresent
               resources: {}
               volumeMounts:

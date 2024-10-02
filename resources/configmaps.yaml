@@ -18,21 +18,19 @@ data:
     sleep 30
     cp -rv /ssh /tmp/
     chmod -R 600 /tmp/ssh
-    apk update
-    apk add curl openssh
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
       -d "{\"state\": \"$(/bin/sh /opt/nas01.sh)\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
-      "https://ass.crt.house/api/states/input_number.nas01" > /dev/null
+      "https://ass.crt.house/api/states/input_number.nas01"
 
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
       -d "{\"state\": \"$(/bin/sh /opt/nas02.sh)\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
-      "https://ass.crt.house/api/states/input_number.nas02" > /dev/null
+      "https://ass.crt.house/api/states/input_number.nas02"
 
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
       -d "{\"state\": \"$(/bin/sh /opt/seedbox.sh)\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
-      "https://ass.crt.house/api/states/input_number.seedbox" > /dev/null
+      "https://ass.crt.house/api/states/input_number.seedbox"
 
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
       -d "{\"state\": \"$(date '+%F %T')\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
-      "https://ass.crt.house/api/states/input_datetime.storage_last_update" > /dev/null
+      "https://ass.crt.house/api/states/input_datetime.storage_last_update"
 
