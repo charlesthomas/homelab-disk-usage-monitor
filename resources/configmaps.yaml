@@ -15,6 +15,7 @@ data:
     ssh -F /tmp/ssh/config seedbox du -sh . | awk '{ print $1 }' | tr -d G
   update_hass.sh: |
     set -ex
+    sleep 600
     cp -rv /ssh /tmp/
     chmod -R 600 /tmp/ssh
     apk update
