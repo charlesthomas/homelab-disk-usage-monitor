@@ -14,6 +14,7 @@ data:
   seedbox.sh: |
     ssh seedbox du -sh . | awk '{ print $1 }' | tr -d G
   update_hass.sh: |
+    sleep 9999999
     chmod -R 600 /ssh
     apk update
     apk add curl ssh
