@@ -12,7 +12,7 @@ data:
   nas02.sh: |
     ssh -F /tmp/ssh/config nas02 df /mnt/nas02/critical | tail -1 | awk '{ print $5 }' | tr -d %
   seedbox.sh: |
-    echo "$(ssh -F /tmp/ssh/config seedbox du -sh . | awk '{ print $1 }' | tr -d G) * 100 / 1024" | bc
+    echo "$(ssh -F /tmp/ssh/config seedbox du -sh . | awk '{ print $1 }' | tr -d G) * 100 / 931.3" | bc
   update_hass.sh: |
     set -ex
     sleep 30
