@@ -8,11 +8,11 @@ data:
   liveness.sh: |-
     tailscale ping offsite-rpi &>/dev/null
   nas01.sh: |
-    echo "1024 * $(ssh -F /tmp/ssh/config nas01 df -h /volume1 | tail -1 | awk '{ print $3 }' | tr -d T)" | bc
+    ssh -F /tmp/ssh/config nas01 df /volume1 | tail -1 | awk '{ print $5 }' | tr -d %
   nas02.sh: |
-    echo "1024 * $(ssh -F /tmp/ssh/config nas02 df -h /mnt/nas02/critical | tail -1 | awk '{ print $3 }' | tr -d T)" | bc
+    ssh -F /tmp/ssh/config nas02 df /mnt/nas02/critical | tail -1 | awk '{ print $5 }' | tr -d %
   seedbox.sh: |
-    ssh -F /tmp/ssh/config seedbox du -sh . | awk '{ print $1 }' | tr -d G
+    echo "$(ssh -F /tmp/ssh/config seedbox du -sh . | awk '{ print $1 }' | tr -d G) * 100 / 1024" | bc
   update_hass.sh: |
     set -ex
     sleep 30
@@ -25,15 +25,15 @@ data:
     seedbox=$(/bin/sh /opt/seedbox.sh)
     [[ "${seedbox}" == "" ]] && exit 1
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
-      -d "{\"state\": \"${nas01}\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
+      -d "{\"state\": \"${nas01}\", \"attributes\": {\"unit_of_measurement\": \"%\"}}" \
       "https://ass.crt.house/api/states/input_number.nas01"
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
-      -d "{\"state\": \"${nas02}\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
+      -d "{\"state\": \"${nas02}\", \"attributes\": {\"unit_of_measurement\": \"%\"}}" \
       "https://ass.crt.house/api/states/input_number.nas02"
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
-      -d "{\"state\": \"${seedbox}\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
+      -d "{\"state\": \"${seedbox}\", \"attributes\": {\"unit_of_measurement\": \"%\"}}" \
       "https://ass.crt.house/api/states/input_number.seedbox"
     curl -s -H "Authorization: Bearer ${TOKEN}" -H "Content-Type: application/json" \
-      -d "{\"state\": \"$(date '+%F %T')\", \"attributes\": {\"unit_of_measurement\": \"GB\"}}" \
+      -d "{\"state\": \"$(date '+%F %T')\"}" \
       "https://ass.crt.house/api/states/input_datetime.storage_last_update"
 
