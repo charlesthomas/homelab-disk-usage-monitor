@@ -46,6 +46,7 @@ spec:
               resources: {}
               restartPolicy: Always
               securityContext:
+                privileged: true
                 capabilities:                                                              
                   add:                                                                     
                   - NET_ADMIN
