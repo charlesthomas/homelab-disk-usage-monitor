@@ -32,38 +32,7 @@ spec:
                   name: scripts
                 - mountPath: /ssh
                   name: ssh
-          initContainers:
-            - name: tailscale
-              imagePullPolicy: IfNotPresent
-              image: "ghcr.io/tailscale/tailscale:v1.78.1"
-              readinessProbe:
-                exec:
-                  command:
-                    - /bin/sh
-                    - /opt/liveness.sh
-                initialDelaySeconds: 5
-                periodSeconds: 5
-              resources: {}
-              restartPolicy: Always
-              securityContext:
-                privileged: true
-                capabilities:                                                              
-                  add:                                                                     
-                  - NET_ADMIN
-              env:
-              - name: TS_KUBE_SECRET
-                value: "tailscale"
-              - name: TS_USERSPACE
-                value: "false"
-              - name: TS_ACCEPT_DNS
-                value: "true"
-              - name: TS_AUTHKEY
-                valueFrom:
-                  secretKeyRef:
-                    name: tailscale-auth
-                    key: TS_AUTHKEY
           restartPolicy: Never
-          serviceAccountName: tailscale
           volumes:
             - name: scripts
               configMap:

@@ -5,8 +5,6 @@ metadata:
   name: scripts
   namespace: disk-usage-monitor
 data:
-  liveness.sh: |-
-    tailscale ping offsite-rpi &>/dev/null
   nas01.sh: |
     ssh -F /tmp/ssh/config nas01 df /volume1 | tail -1 | awk '{ print $5 }' | tr -d %
   nas02.sh: |
@@ -15,7 +13,6 @@ data:
     echo "$(ssh -F /tmp/ssh/config seedbox du -sh . | awk '{ print $1 }' | tr -d G) * 100 / 931.3" | bc
   update_hass.sh: |
     set -ex
-    sleep 30
     cp -rv /ssh /tmp/
     chmod -R 600 /tmp/ssh
     nas01=$(/bin/sh /opt/nas01.sh)
