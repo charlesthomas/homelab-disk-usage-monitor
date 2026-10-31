@@ -5,8 +5,10 @@ namespace: disk-usage-monitor
 
 commonAnnotations:
   repo: https://github.com/charlesthomas/homelab-disk-usage-monitor
-commonLabels:
-  app: disk-usage-monitor
+labels:
+- includeSelectors: true
+  pairs:
+    app: disk-usage-monitor
 
 resources:
 - resources/configmaps.yaml
