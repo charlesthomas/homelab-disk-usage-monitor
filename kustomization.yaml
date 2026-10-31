@@ -5,8 +5,10 @@ namespace: disk-usage-monitor
 
 commonAnnotations:
   repo: https://github.com/charlesthomas/homelab-disk-usage-monitor
-commonLabels:
-  app: disk-usage-monitor
+labels:
+- includeSelectors: true
+  pairs:
+    app: disk-usage-monitor
 
 resources:
 - resources/configmaps.yaml
@@ -14,3 +16,11 @@ resources:
 - resources/external-secrets.yaml
 - resources/namespaces.yaml
 patches:
+configMapGenerator:
+- name: grafana-dashboard-disk-usage-monitor
+  files:
+  - grafana/disk-usage-monitor.json
+  options:
+    disableNameSuffixHash: true
+    labels:
+      grafana_dashboard: "1"
